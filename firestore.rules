@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /player_states/{uid} {
+      allow create, update, delete: if false;
+      allow read : if uid == request.auth.uid;
+    }
+    match /games/{gameId} {
+      allow create, update, delete: if false;
+      allow read : if true;
+
+      match /player_moves/{uid} {       
+        allow read: if true;
+        allow create, update, delete: if (uid == request.auth.uid) && (gameData().turn_uid == request.auth.uid);
+      }
+      function gameData() {
+          return get(/databases/$(database)/documents/games/$(gameId)).data
+      }
+    }
+    // TODO: add fcm functionality
+    // FCM Tokens:
+    //   - Anyone can write their token.
+    //   - Reading list of tokens is not allowed.
+    //match /fcmTokens/{token} {
+    //  allow read: if false;
+    //  allow write;
+    //}
+  }
+}
