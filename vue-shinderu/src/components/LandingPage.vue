@@ -1,12 +1,27 @@
 <script setup>
 import { ref } from 'vue'
-import { DiscordSDK } from "@discord/embedded-app-sdk";
+import { DiscordSDK, patchUrlMappings } from "@discord/embedded-app-sdk";
+import {
+  doc,
+  increment,
+  serverTimestamp,
+  Timestamp,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
+import { computed } from 'vue';
+import { useDocument, useFirestore } from 'vuefire';
 
 defineProps({
   msg: String,
 })
 
-let channelName = ref("unknown");
+const db = useFirestore();
+const testDoc = computed(() =>
+  doc(db, 'test', 'new-test'));
+
+const message = useDocument(testDoc);
+let channelName = ref("loading channel name...");
 
 const discordSdk = new DiscordSDK(import.meta.env.VITE_DISCORD_CLIENT_ID);
 // Will eventually store the authenticated user's access_token
@@ -30,7 +45,6 @@ async function appendVoiceChannelName() {
 async function setupDiscordSdk() {
     await discordSdk.ready();
     console.log("Discord SDK is ready");
-  
     // Authorize with Discord Client
     const { code } = await discordSdk.commands.authorize({
       client_id: import.meta.env.VITE_DISCORD_CLIENT_ID,
@@ -70,4 +84,5 @@ async function setupDiscordSdk() {
   <h1>{{ msg }}</h1>
 
   <h1>Playing in: {{ channelName }}</h1>
+  <h3>message: {{ message }}</h3>
 </template>
