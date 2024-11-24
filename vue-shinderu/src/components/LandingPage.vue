@@ -6,7 +6,6 @@ defineProps({
   msg: String,
 })
 
-const count = ref(0);
 let channelName = ref("unknown");
 
 const discordSdk = new DiscordSDK(import.meta.env.VITE_DISCORD_CLIENT_ID);
@@ -45,15 +44,6 @@ async function setupDiscordSdk() {
       ],
     });
 
-
-  // Retrieve an access_token from your activity's server
-  // Note: We need to prefix our backend `/api/token` route with `/.proxy` to stay compliant with the CSP.
-  // Read more about constructing a full URL and using external resources at
-  // https://discord.com/developers/docs/activities/development-guides#construct-a-full-url
-  // const response = await fetch("/.proxy/shinderu-revived/us-central1/authorizeDiscord", {
-
-  // const response = await fetch("/.proxy/api/token", {
-
   const response = await fetch("/.proxy/fapi/token", {
     method: "POST",
     headers: {
@@ -79,11 +69,5 @@ async function setupDiscordSdk() {
 <template>
   <h1>{{ msg }}</h1>
 
-  <h1>{{ channelName }}</h1>
+  <h1>Playing in: {{ channelName }}</h1>
 </template>
-
-<style scoped>
-.read-the-docs {
-  color: #888;
-}
-</style>
