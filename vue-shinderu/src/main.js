@@ -1,9 +1,11 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
+import router from './router'
 import { VueFire } from 'vuefire'
 import { initializeApp } from 'firebase/app'
 import { patchUrlMappings } from '@discord/embedded-app-sdk'
+import { createRouter } from 'vue-router'
 
 // don't worry, this isn't like other api keys
 // this type of firebase api key is considered public
@@ -22,7 +24,7 @@ const firebaseApp = initializeApp({
 createApp(App)
 .use(VueFire, {
     firebaseApp,
-    // add modules like VueFireAuth, ...
     modules: [],
   })
+  .use(router)
   .mount('#app')
