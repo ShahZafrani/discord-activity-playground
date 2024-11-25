@@ -1,5 +1,7 @@
 <script setup>
-import LandingPage from './components/LandingPage.vue'
+import { inject } from 'vue'
+const initializeDiscord = inject('initializeDiscord');
+initializeDiscord();
 </script>
 
 <template>

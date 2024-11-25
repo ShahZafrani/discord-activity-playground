@@ -44,6 +44,35 @@ exports.authorizeDiscord = onRequest({secrets: [discordClientId, discordClientSe
   res.send({access_token: responseData.access_token});
 });
 
+exports.createNewDiscordGame = onRequest(async (req, res) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept");
+  if (req.method === "OPTIONS") {
+    res.status(200).send();
+  }
+  if (req.query.playerId && req.query.instanceId) {
+    const now = Timestamp.fromDate(new Date());
+    const newGame = createEmptyGame();
+    newGame.gameBegin = now;
+    newGame.players.red.uid = req.query.playerId;
+    const gameDocRef = getFirestore()
+        .collection("games")
+        .doc(req.query.instanceId);
+    gameDocRef.set(newGame).then((ref) => {
+      gameDocRef.collection("moves").add({description: "gameStart", timestamp: now});
+      gameDocRef.collection("player_moves").doc("gm").set({timestamp: now});
+      gameDocRef.collection("player_moves").doc(req.query.playerId).set({timestamp: now});
+      return res.status(201).send({gameId: gameDocRef.id});
+    }).catch((error) => {
+      res.status(500).send(error);
+    });
+  } else {
+    return res.status(400).send(`InvalidID: ${req.query}`);
+  }
+});
+
 exports.createNewGame = onRequest(async (req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "POST, OPTIONS");

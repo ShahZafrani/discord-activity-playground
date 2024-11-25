@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from './router'
+import discordWrapper from './plugins/discordWrapper'
 import { VueFire } from 'vuefire'
 import { initializeApp } from 'firebase/app'
 import { patchUrlMappings } from '@discord/embedded-app-sdk'
@@ -19,9 +20,9 @@ const firebaseApp = initializeApp({
     messagingSenderId: "258189134895",
     appId: "1:258189134895:web:fab9db1c9f905c2d4fcada"
 });
-  
 
 createApp(App)
+.use(discordWrapper)
 .use(VueFire, {
     firebaseApp,
     modules: [],
